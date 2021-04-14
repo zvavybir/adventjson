@@ -1,0 +1,16 @@
+[package]
+name = "adventjson"
+version = "0.1.0"
+authors = ["Matthias Kaak <m.kaak@protonmail.ch>"]
+edition = "2018"
+description = "A full json-parser written in Rust for the advent of code challenges"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/zvavybir/adventjson/"
+documentation = "https://docs.rs/adventjson"
+readme = "readme.md"
+keywords = ["json", "parser"]
+categories = ["data-structures", "encoding", "parser-implementations"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
