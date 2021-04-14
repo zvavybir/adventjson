@@ -7,7 +7,7 @@ description = "A full json-parser written in Rust for the advent of code challen
 license = "GPL-3.0-or-later"
 repository = "https://github.com/zvavybir/adventjson/"
 documentation = "https://docs.rs/adventjson"
-readme = "readme.md"
+readme = "README.md"
 keywords = ["json", "parser"]
 categories = ["data-structures", "encoding", "parser-implementations"]
 
