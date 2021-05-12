@@ -57,6 +57,7 @@
 use std::char::decode_utf16;
 use std::cmp::Ordering;
 use std::collections::HashSet;
+use std::error::Error;
 use std::fmt::{self, Display, Formatter};
 use std::mem;
 use std::num::FpCategory;
@@ -134,8 +135,7 @@ pub enum JsonError
     UnterminatedString,
     /// The input ended on a backslash
     EndedOnEscape,
-    /// An unknown escape sequence was encountered (currently know are '\\',
-    /// '\"', and '\'')
+    /// An unknown escape sequence was encountered
     UnknownEscapeSequence(char),
     /// A not string was used as key in an [`JsonObject::Obj`]
     NonStringAsKey,
@@ -146,13 +146,48 @@ pub enum JsonError
     InvalidNumber,
 }
 
-/*impl From<TryFromIntError> for JsonError
+impl Display for JsonError
 {
-    fn from(_: TryFromIntError) -> Self
+    fn fmt(&self, fmt: &mut Formatter<'_>) -> Result<(), fmt::Error>
     {
-        InvalidExponent
+        match self
+        {
+            Empty => write!(fmt, "The input was empty (or only whitespace)"),
+            InvalidChar(c, num) => write!(
+                fmt,
+                "At the position {} the character {:?} was read, but it is \
+invalid at this point",
+                c, num
+            ),
+            UnterminatedString =>
+            {
+                write!(fmt, "A string with no closing quote was read")
+            }
+            EndedOnEscape => write!(fmt, "The input ended on a backslash"),
+            UnknownEscapeSequence(c) => write!(
+                fmt,
+                "The unknown escape sequence \'\\{}\' was encountered",
+                c
+            ),
+            NonStringAsKey => write!(
+                fmt,
+                "Something different than a string was used as the key in an \
+json object"
+            ),
+            InvalidCodepoint => write!(
+                fmt,
+                "Per \'\\uXXXX\' was an invalid code point specified"
+            ),
+            InvalidNumber => write!(
+                fmt,
+                "A floating-point number that is not valid in json was read \
+(like NaN or Infinity)"
+            ),
+        }
     }
-}*/
+}
+
+impl Error for JsonError {}
 
 impl Display for JsonObject
 {
@@ -892,6 +927,32 @@ mod tests
     }
 
     #[test]
+    fn display_jsonerror_tests()
+    {
+        let tests = vec![
+            (
+                JsonObject::read(""),
+                "The input was empty (or only whitespace)",
+            ),
+            (
+                JsonObject::read("{\"test\": \"abc\\uD800\"}"),
+                "Per \'\\uXXXX\' was an invalid code point specified",
+            ),
+            (
+                JsonObject::read("{5: \"hgf\"}"),
+                "Something different than a string was used \
+as the key in an json object",
+            ),
+        ];
+
+        for (val, s) in tests
+        {
+            assert!(val.is_err());
+            assert_eq!(val.unwrap_err().to_string(), s);
+        }
+    }
+
+    #[test]
     fn unique_tests()
     {
         let tests = vec![
@@ -992,7 +1053,6 @@ mod tests
 
         for (input, output) in tests
         {
-            eprintln!("{}", input);
             assert_eq!(input.unique(), output);
             assert_eq!(JsonObject::read(&format!("{}", input)), Ok(input))
         }
