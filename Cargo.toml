@@ -1,6 +1,6 @@
 [package]
 name = "adventjson"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Matthias Kaak <m.kaak@protonmail.ch>"]
 edition = "2018"
 description = "A full json-parser written in Rust for the advent of code challenges"
