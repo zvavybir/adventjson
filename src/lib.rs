@@ -33,7 +33,10 @@
     clippy::nursery,
     clippy::cargo
 )]
-#![allow(clippy::suspicious_else_formatting, clippy::match_like_matches_macro)]
+#![allow(
+    clippy::suspicious_else_formatting,
+    clippy::match_like_matches_macro
+)]
 
 //! A simple JSON library
 //!
@@ -45,7 +48,8 @@
 //! # use adventjson::JsonError;
 //! use adventjson::JsonObject;
 //!
-//! # fn main() -> Result<(), JsonError> {
+//! # fn main() -> Result<(), JsonError>
+//! # {
 //! let s = "{\"hello\": \"World\", \"answer\": 42}";
 //! let json_object = JsonObject::read(s)?;
 //!
@@ -446,7 +450,8 @@ impl JsonObject
         if s.len() > newindex && s[newindex].to_ascii_lowercase() == 'e'
         {
             newindex += 1;
-            if s.len() > newindex && (s[newindex] == '-' || s[newindex] == '+')
+            if s.len() > newindex
+                && (s[newindex] == '-' || s[newindex] == '+')
             {
                 newindex += 1;
             }
@@ -502,11 +507,26 @@ impl JsonObject
                     '\"' => rv.extend_from_slice('\"'.encode_utf16(&mut buf)),
                     '\\' => rv.extend_from_slice('\\'.encode_utf16(&mut buf)),
                     '/' => rv.extend_from_slice('/'.encode_utf16(&mut buf)),
-                    'b' => rv.extend_from_slice('\x08'.encode_utf16(&mut buf)),
-                    'f' => rv.extend_from_slice('\x0c'.encode_utf16(&mut buf)),
-                    'n' => rv.extend_from_slice('\x0a'.encode_utf16(&mut buf)),
-                    'r' => rv.extend_from_slice('\x0d'.encode_utf16(&mut buf)),
-                    't' => rv.extend_from_slice('\x09'.encode_utf16(&mut buf)),
+                    'b' =>
+                    {
+                        rv.extend_from_slice('\x08'.encode_utf16(&mut buf))
+                    }
+                    'f' =>
+                    {
+                        rv.extend_from_slice('\x0c'.encode_utf16(&mut buf))
+                    }
+                    'n' =>
+                    {
+                        rv.extend_from_slice('\x0a'.encode_utf16(&mut buf))
+                    }
+                    'r' =>
+                    {
+                        rv.extend_from_slice('\x0d'.encode_utf16(&mut buf))
+                    }
+                    't' =>
+                    {
+                        rv.extend_from_slice('\x09'.encode_utf16(&mut buf))
+                    }
                     c @ ('\x00'..='\x1F') =>
                     {
                         rv.extend_from_slice(c.encode_utf16(&mut buf))
@@ -730,7 +750,10 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
@@ -761,7 +784,10 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
@@ -802,7 +828,10 @@ mod tests
                 JsonObject::read(whitespaced).unwrap(),
                 JsonStr(output.to_string())
             );
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
@@ -843,7 +872,10 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
@@ -860,7 +892,10 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
@@ -894,7 +929,10 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
+            assert_eq!(
+                format!("{}", JsonObject::read(input).unwrap()),
+                input
+            );
         }
     }
 
