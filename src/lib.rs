@@ -33,10 +33,7 @@
     clippy::nursery,
     clippy::cargo
 )]
-#![allow(
-    clippy::suspicious_else_formatting,
-    clippy::match_like_matches_macro
-)]
+#![allow(clippy::suspicious_else_formatting, clippy::match_like_matches_macro)]
 
 //! A simple JSON library
 //!
@@ -67,8 +64,8 @@ use std::mem;
 use std::num::FpCategory;
 
 use JsonError::{
-    Empty, EndedOnEscape, InvalidChar, InvalidCodepoint, InvalidNumber,
-    NonStringAsKey, UnknownEscapeSequence, UnterminatedString,
+    Empty, EndedOnEscape, InvalidChar, InvalidCodepoint, InvalidNumber, NonStringAsKey,
+    UnknownEscapeSequence, UnterminatedString,
 };
 use JsonObject::{Array, Bool, JsonStr, Null, Number, Obj};
 
@@ -178,10 +175,7 @@ invalid at this point",
                 "Something different than a string was used as the key in an \
 json object"
             ),
-            InvalidCodepoint => write!(
-                fmt,
-                "Per \'\\uXXXX\' was an invalid code point specified"
-            ),
+            InvalidCodepoint => write!(fmt, "Per \'\\uXXXX\' was an invalid code point specified"),
             InvalidNumber => write!(
                 fmt,
                 "A floating-point number that is not valid in json was read \
@@ -268,26 +262,17 @@ impl JsonObject
         Ok((val, newindex + len))
     }
 
-    fn partial_read_false(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_false(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         Self::partial_read_fixed_str(s, newindex, "false", Bool(false))
     }
 
-    fn partial_read_true(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_true(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         Self::partial_read_fixed_str(s, newindex, "true", Bool(true))
     }
 
-    fn partial_read_null(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_null(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         Self::partial_read_fixed_str(s, newindex, "null", Null)
     }
@@ -349,10 +334,7 @@ impl JsonObject
     /// Reads an array; part of [`Self::partial_read`]
     ///
     /// Reads an array
-    fn partial_read_array(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_array(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         match Self::partial_read_arrayoid(s, newindex, ']')
         {
@@ -375,10 +357,7 @@ impl JsonObject
     ///
     /// Reads a json object; json object means in this context
     /// [`JsonObject::Obj`].
-    fn partial_read_obj(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_obj(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         match Self::partial_read_arrayoid(s, newindex, '}')
         {
@@ -387,8 +366,7 @@ impl JsonObject
                 let mut obj = Vec::with_capacity(delimiters.len() / 2 + 1);
                 for wins in delimiters.windows(2).step_by(2)
                 {
-                    let ((key_pos, key_c), (val_pos, val_c)) =
-                        (wins[0], wins[1]);
+                    let ((key_pos, key_c), (val_pos, val_c)) = (wins[0], wins[1]);
                     if key_c != ':'
                     {
                         return Err(InvalidChar(key_c, key_pos));
@@ -406,9 +384,8 @@ impl JsonObject
                         {
                             JsonStr(key) =>
                             {
-                                let val =
-                                    mem::replace(&mut rv[i], Number(0.0));
-                                obj.push((key, val))
+                                let val = mem::replace(&mut rv[i], Number(0.0));
+                                obj.push((key, val));
                             }
                             _ => return Err(NonStringAsKey),
                         }
@@ -420,10 +397,7 @@ impl JsonObject
         }
     }
 
-    fn partial_read_number(
-        s: &[char],
-        mut newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_number(s: &[char], mut newindex: usize) -> Result<(Self, usize), JsonError>
     {
         skip_whitespace!(s, newindex);
 
@@ -440,9 +414,7 @@ impl JsonObject
         if s.len() > newindex && s[newindex] == '.'
         {
             newindex += 1;
-            while s.len() > newindex
-                && s[newindex] >= '0'
-                && s[newindex] <= '9'
+            while s.len() > newindex && s[newindex] >= '0' && s[newindex] <= '9'
             {
                 newindex += 1;
             }
@@ -450,15 +422,12 @@ impl JsonObject
         if s.len() > newindex && s[newindex].to_ascii_lowercase() == 'e'
         {
             newindex += 1;
-            if s.len() > newindex
-                && (s[newindex] == '-' || s[newindex] == '+')
+            if s.len() > newindex && (s[newindex] == '-' || s[newindex] == '+')
             {
                 newindex += 1;
             }
 
-            while s.len() > newindex
-                && s[newindex] >= '0'
-                && s[newindex] <= '9'
+            while s.len() > newindex && s[newindex] >= '0' && s[newindex] <= '9'
             {
                 newindex += 1;
             }
@@ -484,10 +453,7 @@ impl JsonObject
     ///
     /// Reads a string
     #[allow(clippy::cast_possible_truncation)]
-    fn partial_read_string(
-        s: &[char],
-        mut newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    fn partial_read_string(s: &[char], mut newindex: usize) -> Result<(Self, usize), JsonError>
     {
         let mut rv: Vec<u16> = Vec::new();
         let mut buf = [0; 2];
@@ -509,27 +475,27 @@ impl JsonObject
                     '/' => rv.extend_from_slice('/'.encode_utf16(&mut buf)),
                     'b' =>
                     {
-                        rv.extend_from_slice('\x08'.encode_utf16(&mut buf))
+                        rv.extend_from_slice('\x08'.encode_utf16(&mut buf));
                     }
                     'f' =>
                     {
-                        rv.extend_from_slice('\x0c'.encode_utf16(&mut buf))
+                        rv.extend_from_slice('\x0c'.encode_utf16(&mut buf));
                     }
                     'n' =>
                     {
-                        rv.extend_from_slice('\x0a'.encode_utf16(&mut buf))
+                        rv.extend_from_slice('\x0a'.encode_utf16(&mut buf));
                     }
                     'r' =>
                     {
-                        rv.extend_from_slice('\x0d'.encode_utf16(&mut buf))
+                        rv.extend_from_slice('\x0d'.encode_utf16(&mut buf));
                     }
                     't' =>
                     {
-                        rv.extend_from_slice('\x09'.encode_utf16(&mut buf))
+                        rv.extend_from_slice('\x09'.encode_utf16(&mut buf));
                     }
                     c @ ('\x00'..='\x1F') =>
                     {
-                        rv.extend_from_slice(c.encode_utf16(&mut buf))
+                        rv.extend_from_slice(c.encode_utf16(&mut buf));
                     }
                     'u' =>
                     {
@@ -545,9 +511,7 @@ impl JsonObject
                             .map(|(i, c)| {
                                 c.to_ascii_lowercase()
                                     .to_digit(16)
-                                    .map(|v| {
-                                        (v as u16) * 16_u16.pow(3 - i as u32)
-                                    })
+                                    .map(|v| (v as u16) * 16_u16.pow(3 - i as u32))
                                     .ok_or(InvalidChar(*c, newindex + i))
                             })
                             .collect::<Result<Vec<_>, _>>()?
@@ -590,10 +554,7 @@ impl JsonObject
     ///
     /// # Errors
     /// Returns an [`JsonError`] if the input was invalid.
-    pub fn partial_read(
-        s: &[char],
-        newindex: usize,
-    ) -> Result<(Self, usize), JsonError>
+    pub fn partial_read(s: &[char], newindex: usize) -> Result<(Self, usize), JsonError>
     {
         let mut newindex = newindex;
 
@@ -676,8 +637,8 @@ impl JsonObject
 mod tests
 {
     use crate::JsonError::{
-        Empty, EndedOnEscape, InvalidChar, InvalidNumber, NonStringAsKey,
-        UnknownEscapeSequence, UnterminatedString,
+        Empty, EndedOnEscape, InvalidChar, InvalidNumber, NonStringAsKey, UnknownEscapeSequence,
+        UnterminatedString,
     };
     use crate::JsonObject::{self, Array, Bool, JsonStr, Null, Number, Obj};
 
@@ -686,10 +647,7 @@ mod tests
     {
         let tests = vec![
             (
-                Array(vec![
-                    Number(42.0),
-                    JsonStr("Hello, World!".to_string()),
-                ]),
+                Array(vec![Number(42.0), JsonStr("Hello, World!".to_string())]),
                 "[42, \"Hello, World!\"]",
             ),
             (
@@ -750,10 +708,7 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
@@ -784,10 +739,7 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
@@ -828,31 +780,22 @@ mod tests
                 JsonObject::read(whitespaced).unwrap(),
                 JsonStr(output.to_string())
             );
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
     #[test]
     fn read_obj_tests()
     {
-        let longstr1 =
-            "{\"first\": [10, 42], \"sec\": 15, \"la\\\"st\": \"Hi, World!\"}";
-        let longstr2 =
-            "{\"first\" : [10,42],\"sec\":15,\"la\\\"st\": \"Hi, World!\" } ";
-        let longstr4 =
-            "  {  \"sec\" : 15 , \"la\\\"st\" : \"Hi, World!\"  }   ";
+        let longstr1 = "{\"first\": [10, 42], \"sec\": 15, \"la\\\"st\": \"Hi, World!\"}";
+        let longstr2 = "{\"first\" : [10,42],\"sec\":15,\"la\\\"st\": \"Hi, World!\" } ";
+        let longstr4 = "  {  \"sec\" : 15 , \"la\\\"st\" : \"Hi, World!\"  }   ";
         let tests = vec![
             (
                 longstr1,
                 longstr2,
                 Obj(vec![
-                    (
-                        "first".to_string(),
-                        Array(vec![Number(10.0), Number(42.0)]),
-                    ),
+                    ("first".to_string(), Array(vec![Number(10.0), Number(42.0)])),
                     ("sec".to_string(), Number(15.0)),
                     ("la\"st".to_string(), JsonStr("Hi, World!".to_string())),
                 ]),
@@ -872,10 +815,7 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
@@ -892,10 +832,7 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
@@ -908,10 +845,7 @@ mod tests
                 "[  5, [ -4 ,  [ 10 , 30 ] ]]",
                 Array(vec![
                     Number(5.0),
-                    Array(vec![
-                        Number(-4.0),
-                        Array(vec![Number(10.0), Number(30.0)]),
-                    ]),
+                    Array(vec![Number(-4.0), Array(vec![Number(10.0), Number(30.0)])]),
                 ]),
             ),
             (
@@ -929,10 +863,7 @@ mod tests
         {
             assert_eq!(JsonObject::read(input).unwrap(), output);
             assert_eq!(JsonObject::read(whitespaced).unwrap(), output);
-            assert_eq!(
-                format!("{}", JsonObject::read(input).unwrap()),
-                input
-            );
+            assert_eq!(format!("{}", JsonObject::read(input).unwrap()), input);
         }
     }
 
